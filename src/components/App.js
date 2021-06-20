@@ -14,6 +14,7 @@ class App extends Component {
     galleryList: [],
     isLoading: false,
     isModalOpen: false,
+    largeimageurl: '',
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -55,16 +56,30 @@ class App extends Component {
     }
   };
 
+  fancyBox = (e) => {
+    this.setState({
+      largeimageurl: e.target.getAttribute('data-largeimageurl'),
+      isModalOpen: true,
+    });
+  };
+
   onBtnClickHandle = (prevState) => {
     this.setState({ currentPage: prevState.currentPage + 1 });
+  };
+
+  closeModal = () => {
+    this.setState({ isModalOpen: false });
   };
 
   render() {
     return (
       <div className="App">
         <Searchbar onSubmintHandle={this.onSubmintHandle} />
-        <ImageGallery galleryList={this.state.galleryList} />
-        {this.state.galleryList.length !== 0 && (
+        <ImageGallery
+          galleryList={this.state.galleryList}
+          fancyBox={this.fancyBox}
+        />
+        {this.state.galleryList.length !== 0 && !this.state.isLoading && (
           <Button
             onBtnClickHandle={() => {
               this.onBtnClickHandle(this.state);
@@ -72,7 +87,11 @@ class App extends Component {
           />
         )}
         {this.state.isLoading && <LoaderImg />}
-        {this.state.isModalOpen && <Modal />}
+        {this.state.isModalOpen && (
+          <Modal closeModal={this.closeModal}>
+            <img src={this.state.largeimageurl} alt="pic" />
+          </Modal>
+        )}
       </div>
     );
   }
